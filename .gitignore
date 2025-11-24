@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Claude
+.claude/
+
+# Backup files
+*.bak
+*.tmp
+*.backup
+
+# Compiled files
+*.o
+*.obj
+*.exe
+*.out
+*.app
+
+# Clang-Tidy
+.clang-tidy
+compile_commands.json
