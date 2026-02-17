@@ -1,0 +1,217 @@
+{
+  "cpp11": {
+    "title": "C++11 主要特性",
+    "features": [
+      {
+        "name": "auto 类型推导",
+        "description": "编译器自动推导变量类型",
+        "example": "auto x = 42; // int\nauto name = std::string(\"hello\");"
+      },
+      {
+        "name": "nullptr",
+        "description": "类型安全的空指针常量",
+        "example": "int* ptr = nullptr;"
+      },
+      {
+        "name": "范围 for 循环",
+        "description": "简化容器遍历",
+        "example": "for (auto& item : vec) {\n  // 处理 item\n}"
+      },
+      {
+        "name": "lambda 表达式",
+        "description": "匿名函数",
+        "example": "auto sum = [](int a, int b) { return a + b; };"
+      },
+      {
+        "name": "智能指针",
+        "description": "std::unique_ptr, std::shared_ptr, std::weak_ptr",
+        "example": "auto ptr = std::make_unique<Widget>();"
+      },
+      {
+        "name": "右值引用和移动语义",
+        "description": "std::move, 移动构造函数",
+        "example": "std::vector<int> v2 = std::move(v1);"
+      },
+      {
+        "name": "统一初始化",
+        "description": "大括号初始化",
+        "example": "std::vector<int> vec{1, 2, 3};\nWidget w{arg1, arg2};"
+      },
+      {
+        "name": "constexpr",
+        "description": "编译期常量表达式",
+        "example": "constexpr int square(int x) { return x * x; }"
+      },
+      {
+        "name": "override 和 final",
+        "description": "虚函数重写标记",
+        "example": "void draw() override final;"
+      },
+      {
+        "name": "static_assert",
+        "description": "编译期断言",
+        "example": "static_assert(sizeof(int) == 4, \"int must be 4 bytes\");"
+      }
+    ]
+  },
+  "cpp14": {
+    "title": "C++14 主要特性",
+    "features": [
+      {
+        "name": "泛型 lambda",
+        "description": "lambda 参数使用 auto",
+        "example": "auto add = [](auto a, auto b) { return a + b; };"
+      },
+      {
+        "name": "返回值类型推导",
+        "description": "函数返回类型使用 auto",
+        "example": "auto add(int a, int b) { return a + b; }"
+      },
+      {
+        "name": "std::make_unique",
+        "description": "创建 unique_ptr 的工厂函数",
+        "example": "auto ptr = std::make_unique<Widget>(arg);"
+      },
+      {
+        "name": "二进制字面量",
+        "description": "0b 前缀表示二进制",
+        "example": "int mask = 0b1010'1010; // 数字分隔符"
+      },
+      {
+        "name": "变量模板",
+        "description": "模板变量定义",
+        "example": "template<typename T>\nconstexpr T pi = T(3.1415926535897932385);"
+      }
+    ]
+  },
+  "cpp17": {
+    "title": "C++17 主要特性",
+    "features": [
+      {
+        "name": "结构化绑定",
+        "description": "同时声明多个变量",
+        "example": "auto [key, value] = map.insert({1, \"one\"});\nauto [x, y, z] = std::make_tuple(1, 2.0, \"3\");"
+      },
+      {
+        "name": "if/switch 初始化语句",
+        "description": "在条件语句中初始化变量",
+        "example": "if (auto it = map.find(key); it != map.end()) {\n  return it->second;\n}"
+      },
+      {
+        "name": "constexpr if",
+        "description": "编译期条件判断",
+        "example": "if constexpr (std::is_integral_v<T>) { ... }"
+      },
+      {
+        "name": "std::optional",
+        "description": "表示可能不存在的值",
+        "example": "std::optional<int> find(int key);\nif (auto val = find(42)) { use(*val); }"
+      },
+      {
+        "name": "std::variant",
+        "description": "类型安全的 union",
+        "example": "std::variant<int, double, std::string> v = 42;"
+      },
+      {
+        "name": "std::string_view",
+        "description": "轻量级字符串引用",
+        "example": "void process(std::string_view str);"
+      },
+      {
+        "name": "折叠表达式",
+        "description": "简化可变参数模板",
+        "example": "template<typename... Args>\nauto sum(Args... args) { return (args + ...); }"
+      },
+      {
+        "name": "类模板参数推导",
+        "description": "自动推导模板参数",
+        "example": "std::pair p{1, 2.0}; // 推导为 pair<int, double>"
+      }
+    ]
+  },
+  "cpp20": {
+    "title": "C++20 主要特性",
+    "features": [
+      {
+        "name": "Concepts（概念）",
+        "description": "约束模板参数",
+        "example": "template<std::integral T>\nT add(T a, T b) { return a + b; }"
+      },
+      {
+        "name": "Ranges（区间）",
+        "description": "函数式编程风格的容器操作",
+        "example": "auto result = vec | std::views::filter(pred)\n                  | std::views::transform(func);"
+      },
+      {
+        "name": "Coroutines（协程）",
+        "description": "co_await, co_yield, co_return",
+        "example": "generator<int> fibonacci() {\n  int a = 0, b = 1;\n  while (true) {\n    co_yield a;\n    auto tmp = a;\n    a = b;\n    b += tmp;\n  }\n}"
+      },
+      {
+        "name": "Modules（模块）",
+        "description": "替代头文件的新机制",
+        "example": "import std.core;\nexport module mymodule;"
+      },
+      {
+        "name": "三路比较运算符（<=>）",
+        "description": "自动生成比较运算符",
+        "example": "auto operator<=>(const Point&) const = default;"
+      },
+      {
+        "name": "指定初始化器",
+        "description": "按名称初始化成员",
+        "example": "Point p{.x = 1, .y = 2};"
+      },
+      {
+        "name": "consteval 和 constinit",
+        "description": "编译期求值增强",
+        "example": "consteval int square(int n) { return n * n; }"
+      },
+      {
+        "name": "std::span",
+        "description": "连续序列的视图",
+        "example": "void process(std::span<int> data);"
+      },
+      {
+        "name": "std::format",
+        "description": "类型安全的格式化",
+        "example": "auto s = std::format(\"Hello, {}!\", name);"
+      }
+    ]
+  },
+  "cpp23": {
+    "title": "C++23 主要特性",
+    "features": [
+      {
+        "name": "std::expected",
+        "description": "错误处理的替代方案",
+        "example": "std::expected<int, Error> divide(int a, int b);"
+      },
+      {
+        "name": "std::print",
+        "description": "简化的打印函数",
+        "example": "std::print(\"Hello, {}!\\n\", name);"
+      },
+      {
+        "name": "if consteval",
+        "description": "检测常量求值上下文",
+        "example": "if consteval { /* 编译期 */ } else { /* 运行期 */ }"
+      },
+      {
+        "name": "多维下标运算符",
+        "description": "支持多个下标参数",
+        "example": "matrix[i, j] = value; // 代替 matrix[i][j]"
+      },
+      {
+        "name": "推导 this",
+        "description": "简化成员函数模板",
+        "example": "struct S {\n  template<typename Self>\n  auto&& value(this Self&& self) { return self.val_; }\n};"
+      },
+      {
+        "name": "std::mdspan",
+        "description": "多维数组视图",
+        "example": "std::mdspan<int, std::extents<int, 3, 4>> matrix(data);"
+      }
+    ]
+  }
+}

@@ -1,0 +1,189 @@
+{
+  "memory": {
+    "title": "内存管理最佳实践",
+    "rules": [
+      {
+        "name": "优先使用智能指针",
+        "description": "使用 std::unique_ptr 和 std::shared_ptr 替代裸指针",
+        "good_example": "std::unique_ptr<Widget> widget = std::make_unique<Widget>();",
+        "bad_example": "Widget* widget = new Widget(); // 容易忘记 delete",
+        "reason": "智能指针自动管理内存，防止内存泄漏"
+      },
+      {
+        "name": "遵循 RAII 原则",
+        "description": "资源获取即初始化，利用析构函数自动释放资源",
+        "good_example": "class FileHandler {\n  std::fstream file;\npublic:\n  FileHandler(const std::string& name) : file(name) {}\n  ~FileHandler() { file.close(); }\n};",
+        "bad_example": "FILE* f = fopen(\"file.txt\", \"r\");\n// ... 可能忘记 fclose(f)",
+        "reason": "确保资源在所有代码路径上都被正确释放"
+      },
+      {
+        "name": "避免内存泄漏",
+        "description": "每个 new 都要有对应的 delete，每个 new[] 要有 delete[]",
+        "tips": [
+          "使用智能指针避免手动管理",
+          "使用 std::vector 替代动态数组",
+          "使用工具检测：valgrind, AddressSanitizer"
+        ]
+      },
+      {
+        "name": "小心悬空指针",
+        "description": "delete 后将指针设为 nullptr",
+        "good_example": "delete ptr;\nptr = nullptr;",
+        "bad_example": "delete ptr; // ptr 仍指向已释放内存",
+        "reason": "避免使用已释放的内存"
+      }
+    ]
+  },
+  "exceptions": {
+    "title": "异常处理最佳实践",
+    "rules": [
+      {
+        "name": "按引用捕获异常",
+        "description": "使用 const 引用捕获异常，避免对象切片",
+        "good_example": "try { ... } catch (const std::exception& e) { ... }",
+        "bad_example": "catch (std::exception e) // 对象切片",
+        "reason": "保留异常的完整类型信息"
+      },
+      {
+        "name": "不要在析构函数中抛出异常",
+        "description": "析构函数应标记为 noexcept",
+        "good_example": "~MyClass() noexcept { /* cleanup */ }",
+        "bad_example": "~MyClass() { throw std::runtime_error(\"error\"); }",
+        "reason": "析构函数抛异常会导致程序终止"
+      },
+      {
+        "name": "使用自定义异常类型",
+        "description": "继承 std::exception 创建有意义的异常类型",
+        "good_example": "class ValidationError : public std::runtime_error {\npublic:\n  ValidationError(const std::string& msg) : std::runtime_error(msg) {}\n};",
+        "reason": "提供更精确的错误信息和处理方式"
+      }
+    ]
+  },
+  "templates": {
+    "title": "模板最佳实践",
+    "rules": [
+      {
+        "name": "使用 typename 而非 class",
+        "description": "模板参数优先使用 typename 关键字",
+        "good_example": "template<typename T>",
+        "bad_example": "template<class T>",
+        "reason": "typename 更明确表示类型参数"
+      },
+      {
+        "name": "使用 Concepts 约束模板参数（C++20）",
+        "description": "使用概念明确模板参数要求",
+        "good_example": "template<std::integral T>\nT add(T a, T b) { return a + b; }",
+        "reason": "提供更清晰的错误信息和接口约束"
+      },
+      {
+        "name": "避免模板代码膨胀",
+        "description": "提取与类型无关的代码到基类",
+        "tips": [
+          "使用类型擦除技术",
+          "将通用逻辑移到非模板基类",
+          "考虑使用 extern template"
+        ]
+      }
+    ]
+  },
+  "concurrency": {
+    "title": "并发编程最佳实践",
+    "rules": [
+      {
+        "name": "优先使用标准库工具",
+        "description": "使用 std::mutex, std::lock_guard, std::thread 等",
+        "good_example": "std::lock_guard<std::mutex> lock(mutex_);\ndata_ = new_value;",
+        "reason": "标准库提供跨平台、经过验证的实现"
+      },
+      {
+        "name": "避免死锁",
+        "description": "始终以相同顺序获取多个锁",
+        "good_example": "std::scoped_lock lock(mutex1_, mutex2_); // C++17",
+        "bad_example": "// 线程1: lock(m1), lock(m2)\n// 线程2: lock(m2), lock(m1) // 可能死锁",
+        "reason": "防止循环等待导致的死锁"
+      },
+      {
+        "name": "使用原子操作",
+        "description": "简单变量使用 std::atomic 避免锁开销",
+        "good_example": "std::atomic<int> counter{0};\ncounter.fetch_add(1);",
+        "reason": "原子操作比互斥锁更高效"
+      },
+      {
+        "name": "使用 std::async 和 futures",
+        "description": "异步任务使用高层抽象",
+        "good_example": "auto future = std::async(std::launch::async, []{ return compute(); });",
+        "reason": "简化异步编程，自动处理线程管理"
+      }
+    ]
+  },
+  "performance": {
+    "title": "性能优化最佳实践",
+    "rules": [
+      {
+        "name": "传递大对象使用 const 引用",
+        "description": "避免不必要的拷贝",
+        "good_example": "void process(const LargeObject& obj);",
+        "bad_example": "void process(LargeObject obj); // 拷贝开销",
+        "reason": "减少内存拷贝，提升性能"
+      },
+      {
+        "name": "使用移动语义",
+        "description": "返回值和右值使用 std::move",
+        "good_example": "return std::move(large_vector); // 注意：返回值通常不需要",
+        "reason": "避免深拷贝，转移资源所有权"
+      },
+      {
+        "name": "使用 reserve 预分配容器空间",
+        "description": "已知大小时预分配内存",
+        "good_example": "std::vector<int> vec;\nvec.reserve(1000);",
+        "reason": "减少重新分配和拷贝次数"
+      },
+      {
+        "name": "避免过早优化",
+        "description": "先保证正确性，再用 profiler 找瓶颈",
+        "tips": [
+          "使用性能分析工具（perf, gprof, Valgrind）",
+          "测量再优化，不要凭直觉",
+          "优先优化算法复杂度"
+        ]
+      }
+    ]
+  },
+  "modern_cpp": {
+    "title": "现代 C++ 特性",
+    "rules": [
+      {
+        "name": "使用 auto 简化类型声明",
+        "description": "复杂类型使用 auto 推导",
+        "good_example": "auto it = map.begin();\nauto result = std::make_unique<Widget>();",
+        "reason": "减少冗余，提高可维护性"
+      },
+      {
+        "name": "使用范围 for 循环",
+        "description": "遍历容器使用 range-based for",
+        "good_example": "for (const auto& item : container) { ... }",
+        "bad_example": "for (size_t i = 0; i < vec.size(); ++i) { ... }",
+        "reason": "更简洁，避免索引错误"
+      },
+      {
+        "name": "使用 nullptr 替代 NULL",
+        "description": "空指针使用 nullptr",
+        "good_example": "int* ptr = nullptr;",
+        "bad_example": "int* ptr = NULL; // 或 0",
+        "reason": "类型安全，避免重载歧义"
+      },
+      {
+        "name": "使用 override 和 final",
+        "description": "虚函数重写使用 override 关键字",
+        "good_example": "void draw() override;",
+        "reason": "编译器检查是否正确重写，防止错误"
+      },
+      {
+        "name": "使用 constexpr",
+        "description": "编译期常量使用 constexpr",
+        "good_example": "constexpr int MAX_SIZE = 100;",
+        "reason": "编译期计算，提升性能"
+      }
+    ]
+  }
+}

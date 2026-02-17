@@ -1,0 +1,139 @@
+{
+  "singleton": {
+    "name": "单例模式 (Singleton)",
+    "category": "创建型模式",
+    "intent": "确保一个类只有一个实例，并提供全局访问点",
+    "use_cases": [
+      "配置管理器",
+      "日志系统",
+      "线程池",
+      "数据库连接池"
+    ],
+    "modern_cpp": "C++11",
+    "example": "// 线程安全的单例模式 (C++11 Meyers' Singleton)\nclass Singleton {\npublic:\n    // 删除拷贝构造和赋值运算符\n    Singleton(const Singleton&) = delete;\n    Singleton& operator=(const Singleton&) = delete;\n\n    // 获取单例实例\n    static Singleton& getInstance() {\n        static Singleton instance;  // C++11 保证线程安全\n        return instance;\n    }\n\n    void doSomething() {\n        // 业务逻辑\n    }\n\nprivate:\n    Singleton() = default;  // 私有构造函数\n    ~Singleton() = default;\n};\n\n// 使用方式\nSingleton::getInstance().doSomething();",
+    "pros": [
+      "控制实例数量",
+      "全局访问点",
+      "延迟初始化"
+    ],
+    "cons": [
+      "全局状态，难以测试",
+      "可能导致紧耦合",
+      "多线程需要特别注意"
+    ],
+    "alternatives": "依赖注入、服务定位器"
+  },
+  "factory": {
+    "name": "工厂模式 (Factory)",
+    "category": "创建型模式",
+    "intent": "定义创建对象的接口，让子类决定实例化哪个类",
+    "use_cases": [
+      "根据配置创建不同类型的对象",
+      "插件系统",
+      "跨平台代码",
+      "对象池"
+    ],
+    "modern_cpp": "C++11",
+    "example": "// 产品基类\nclass Shape {\npublic:\n    virtual ~Shape() = default;\n    virtual void draw() const = 0;\n};\n\n// 具体产品\nclass Circle : public Shape {\npublic:\n    void draw() const override {\n        std::cout << \"Drawing Circle\\n\";\n    }\n};\n\nclass Rectangle : public Shape {\npublic:\n    void draw() const override {\n        std::cout << \"Drawing Rectangle\\n\";\n    }\n};\n\n// 工厂类 (使用智能指针)\nclass ShapeFactory {\npublic:\n    enum class ShapeType { Circle, Rectangle };\n\n    static std::unique_ptr<Shape> createShape(ShapeType type) {\n        switch (type) {\n            case ShapeType::Circle:\n                return std::make_unique<Circle>();\n            case ShapeType::Rectangle:\n                return std::make_unique<Rectangle>();\n            default:\n                return nullptr;\n        }\n    }\n};\n\n// 使用方式\nauto shape = ShapeFactory::createShape(ShapeFactory::ShapeType::Circle);\nshape->draw();",
+    "pros": [
+      "解耦对象创建和使用",
+      "易于扩展新类型",
+      "符合开闭原则"
+    ],
+    "cons": [
+      "增加代码复杂度",
+      "每种产品都需要具体类"
+    ]
+  },
+  "observer": {
+    "name": "观察者模式 (Observer)",
+    "category": "行为型模式",
+    "intent": "定义对象间的一对多依赖关系，当一个对象状态改变时，所有依赖者都会收到通知",
+    "use_cases": [
+      "事件系统",
+      "MVC 架构中的视图更新",
+      "发布-订阅系统",
+      "实时数据更新"
+    ],
+    "modern_cpp": "C++11",
+    "example": "// 观察者接口\nclass Observer {\npublic:\n    virtual ~Observer() = default;\n    virtual void update(const std::string& message) = 0;\n};\n\n// 主题/被观察者\nclass Subject {\npublic:\n    void attach(std::shared_ptr<Observer> observer) {\n        observers_.push_back(observer);\n    }\n\n    void detach(std::shared_ptr<Observer> observer) {\n        observers_.erase(\n            std::remove(observers_.begin(), observers_.end(), observer),\n            observers_.end()\n        );\n    }\n\n    void notify(const std::string& message) {\n        for (auto& observer : observers_) {\n            if (auto obs = observer.lock()) {\n                obs->update(message);\n            }\n        }\n    }\n\nprivate:\n    std::vector<std::weak_ptr<Observer>> observers_;\n};\n\n// 具体观察者\nclass ConcreteObserver : public Observer {\npublic:\n    explicit ConcreteObserver(std::string name) : name_(std::move(name)) {}\n\n    void update(const std::string& message) override {\n        std::cout << name_ << \" received: \" << message << \"\\n\";\n    }\n\nprivate:\n    std::string name_;\n};\n\n// 使用方式\nSubject subject;\nauto obs1 = std::make_shared<ConcreteObserver>(\"Observer1\");\nauto obs2 = std::make_shared<ConcreteObserver>(\"Observer2\");\n\nsubject.attach(obs1);\nsubject.attach(obs2);\nsubject.notify(\"Hello Observers!\");",
+    "pros": [
+      "松耦合",
+      "支持广播通信",
+      "符合开闭原则"
+    ],
+    "cons": [
+      "可能导致意外更新",
+      "观察者顺序不确定",
+      "内存泄漏风险（使用 weak_ptr 解决）"
+    ]
+  },
+  "raii": {
+    "name": "RAII (资源获取即初始化)",
+    "category": "C++ 惯用法",
+    "intent": "利用对象生命周期自动管理资源",
+    "use_cases": [
+      "文件句柄",
+      "内存管理",
+      "锁管理",
+      "数据库连接"
+    ],
+    "modern_cpp": "C++11",
+    "example": "// RAII 文件管理器\nclass FileHandler {\npublic:\n    explicit FileHandler(const std::string& filename) \n        : file_(filename) {\n        if (!file_.is_open()) {\n            throw std::runtime_error(\"Failed to open file\");\n        }\n    }\n\n    // 禁止拷贝\n    FileHandler(const FileHandler&) = delete;\n    FileHandler& operator=(const FileHandler&) = delete;\n\n    // 允许移动\n    FileHandler(FileHandler&&) = default;\n    FileHandler& operator=(FileHandler&&) = default;\n\n    ~FileHandler() {\n        if (file_.is_open()) {\n            file_.close();\n        }\n    }\n\n    void write(const std::string& data) {\n        file_ << data;\n    }\n\nprivate:\n    std::fstream file_;\n};\n\n// 使用方式 - 无需手动关闭文件\nvoid processFile(const std::string& filename) {\n    FileHandler handler(filename);\n    handler.write(\"Hello, RAII!\");\n    // 离开作用域时自动关闭文件\n}\n\n// RAII 锁管理\nvoid threadSafeOperation() {\n    std::mutex mtx;\n    std::lock_guard<std::mutex> lock(mtx);\n    // 临界区代码\n    // 离开作用域时自动解锁\n}",
+    "pros": [
+      "异常安全",
+      "不会忘记释放资源",
+      "代码简洁"
+    ],
+    "cons": [
+      "需要理解对象生命周期"
+    ],
+    "related": "智能指针、std::lock_guard、std::unique_lock"
+  },
+  "pimpl": {
+    "name": "Pimpl (指向实现的指针)",
+    "category": "C++ 惯用法",
+    "intent": "将实现细节从接口中分离，减少编译依赖",
+    "use_cases": [
+      "隐藏实现细节",
+      "减少头文件依赖",
+      "ABI 稳定性",
+      "编译时间优化"
+    ],
+    "modern_cpp": "C++11",
+    "example": "// Widget.h - 公开接口\nclass Widget {\npublic:\n    Widget();\n    ~Widget();  // 必须在 .cpp 中定义\n\n    // 禁止拷贝（或实现深拷贝）\n    Widget(const Widget&) = delete;\n    Widget& operator=(const Widget&) = delete;\n\n    // 允许移动\n    Widget(Widget&&) noexcept;\n    Widget& operator=(Widget&&) noexcept;\n\n    void doSomething();\n    int getValue() const;\n\nprivate:\n    class Impl;  // 前向声明\n    std::unique_ptr<Impl> pImpl_;  // 指向实现的指针\n};\n\n// Widget.cpp - 实现\nclass Widget::Impl {\npublic:\n    void doSomething() {\n        // 实现细节\n    }\n    \n    int getValue() const {\n        return value_;\n    }\n\nprivate:\n    int value_ = 0;\n    std::vector<int> data_;  // 不会出现在公开头文件中\n};\n\nWidget::Widget() : pImpl_(std::make_unique<Impl>()) {}\nWidget::~Widget() = default;\nWidget::Widget(Widget&&) noexcept = default;\nWidget& Widget::operator=(Widget&&) noexcept = default;\n\nvoid Widget::doSomething() {\n    pImpl_->doSomething();\n}\n\nint Widget::getValue() const {\n    return pImpl_->getValue();\n}",
+    "pros": [
+      "隐藏实现细节",
+      "减少编译依赖",
+      "二进制兼容性",
+      "减少头文件包含"
+    ],
+    "cons": [
+      "增加间接层",
+      "轻微性能开销",
+      "需要额外的内存分配"
+    ]
+  },
+  "strategy": {
+    "name": "策略模式 (Strategy)",
+    "category": "行为型模式",
+    "intent": "定义一系列算法，把它们封装起来，并且使它们可以互相替换",
+    "use_cases": [
+      "排序算法选择",
+      "压缩算法",
+      "支付方式",
+      "验证策略"
+    ],
+    "modern_cpp": "C++11",
+    "example": "// 策略接口\nclass CompressionStrategy {\npublic:\n    virtual ~CompressionStrategy() = default;\n    virtual std::vector<uint8_t> compress(const std::vector<uint8_t>& data) = 0;\n};\n\n// 具体策略\nclass ZipCompression : public CompressionStrategy {\npublic:\n    std::vector<uint8_t> compress(const std::vector<uint8_t>& data) override {\n        // ZIP 压缩实现\n        return data;  // 简化示例\n    }\n};\n\nclass GzipCompression : public CompressionStrategy {\npublic:\n    std::vector<uint8_t> compress(const std::vector<uint8_t>& data) override {\n        // GZIP 压缩实现\n        return data;  // 简化示例\n    }\n};\n\n// 上下文类\nclass Compressor {\npublic:\n    void setStrategy(std::unique_ptr<CompressionStrategy> strategy) {\n        strategy_ = std::move(strategy);\n    }\n\n    std::vector<uint8_t> compress(const std::vector<uint8_t>& data) {\n        if (!strategy_) {\n            throw std::runtime_error(\"No strategy set\");\n        }\n        return strategy_->compress(data);\n    }\n\nprivate:\n    std::unique_ptr<CompressionStrategy> strategy_;\n};\n\n// 使用方式\nCompressor compressor;\ncompressor.setStrategy(std::make_unique<ZipCompression>());\nauto result = compressor.compress(data);\n\n// 运行时切换策略\ncompressor.setStrategy(std::make_unique<GzipCompression>());\nresult = compressor.compress(data);",
+    "pros": [
+      "算法可以自由切换",
+      "避免大量条件语句",
+      "易于扩展新算法"
+    ],
+    "cons": [
+      "客户端需要了解不同策略",
+      "增加对象数量"
+    ]
+  }
+}
