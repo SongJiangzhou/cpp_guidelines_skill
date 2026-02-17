@@ -77,6 +77,42 @@ python scripts/const_checker.py
 cat my_code.cpp | python scripts/const_checker.py
 ```
 
+## 提示模板 (Prompts)
+
+### 代码审查提示
+
+```bash
+python prompts/code_review.py [general|performance|safety|readability|modern]
+```
+
+参数：
+- `general`: 综合审查（默认）
+- `performance`: 性能优化
+- `safety`: 内存和类型安全
+- `readability`: 可读性和维护性
+- `modern`: 现代 C++ 特性使用
+
+示例：
+```bash
+python prompts/code_review.py safety
+python prompts/code_review.py performance
+```
+
+### 重构建议提示
+
+```bash
+python prompts/refactor_suggestion.py [cpp11|cpp14|cpp17|cpp20|cpp23]
+```
+
+参数：
+- 目标 C++ 标准 (默认: cpp17)
+
+示例：
+```bash
+python prompts/refactor_suggestion.py cpp20
+python prompts/refactor_suggestion.py cpp11
+```
+
 ## 详细功能
 
 - **命名检查**: 验证标识符是否符合 C++ 命名规范
