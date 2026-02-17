@@ -1,6 +1,6 @@
 ---
-name: cpp-style-guide
-description: C++ 编码规范检查和最佳实践建议工具。用于：(1) 检查命名规范 (2) 检查头文件包含保护 (3) 内存安全分析 (4) 现代 C++ 写法建议 (5) const 正确性检查 (6) 代码审查支持
+name: cpp-guidelines
+description: C++ 编码规范检查和代码审查工具。使用方式: /cpp-guidelines [功能] [参数]
 ---
 
 # C++ 编码规范检查
@@ -9,121 +9,52 @@ description: C++ 编码规范检查和最佳实践建议工具。用于：(1) �
 
 ## 快速开始
 
-所有检查功能通过 `scripts/` 目录下的 Python 脚本提供。直接运行脚本进行代码检查。
-
-### 命名规范检查
+### 命令行使用
 
 ```bash
+# 命名检查
 python scripts/naming_checker.py <identifier> <category>
-```
 
-参数：
-- `identifier`: 要检查的标识符名称
-- `category`: 标识符类别 (variable/constant/function/class/namespace/member_variable/template_parameter/file_naming)
+# 内存安全分析
+cat code.cpp | python scripts/memory_safety.py
 
-示例：
-```bash
-python scripts/naming_checker.py UserName class
-python scripts/naming_checker.py MAX_SIZE constant
-```
+# 现代 C++ 建议
+cat code.cpp | python scripts/modern_cpp.py cpp20
 
-### 包含保护检查
-
-```bash
-python scripts/include_guard_checker.py <filepath>
-```
-
-示例：
-```bash
-python scripts/include_guard_checker.py my_header.h < code.cpp
-```
-
-### 内存安全分析
-
-```bash
-python scripts/memory_safety.py
-```
-
-从 stdin 读取 C++ 代码进行分析。
-
-示例：
-```bash
-cat my_code.cpp | python scripts/memory_safety.py
-```
-
-### 现代 C++ 建议
-
-```bash
-python scripts/modern_cpp.py [cpp11|cpp14|cpp17|cpp20|cpp23]
-```
-
-从 stdin 读取代码，默认为 cpp17。
-
-示例：
-```bash
-cat old_code.cpp | python scripts/modern_cpp.py cpp20
-```
-
-### Const 正确性检查
-
-```bash
-python scripts/const_checker.py
-```
-
-从 stdin 读取代码进行 const 检查。
-
-示例：
-```bash
-cat my_code.cpp | python scripts/const_checker.py
-```
-
-## 提示模板 (Prompts)
-
-### 代码审查提示
-
-```bash
-python scripts/code_review.py [general|performance|safety|readability|modern]
-```
-
-参数：
-- `general`: 综合审查（默认）
-- `performance`: 性能优化
-- `safety`: 内存和类型安全
-- `readability`: 可读性和维护性
-- `modern`: 现代 C++ 特性使用
-
-示例：
-```bash
+# 代码审查提示
 python scripts/code_review.py safety
-python scripts/code_review.py performance
+
+# 重构建议
+python scripts/refactor_suggestion.py cpp17
 ```
 
-### 重构建议提示
+### 通过命令调用
 
-```bash
-python scripts/refactor_suggestion.py [cpp11|cpp14|cpp17|cpp20|cpp23]
+```
+/cpp-guidelines check naming <identifier> <category>
+/cpp-guidelines check memory < code.cpp
+/cpp-guidelines review safety
+/cpp-guidelines refactor cpp20
 ```
 
-参数：
-- 目标 C++ 标准 (默认: cpp17)
+详细使用说明见 `commands/cpp-guidelines.md`
 
-示例：
-```bash
-python scripts/refactor_suggestion.py cpp20
-python scripts/refactor_suggestion.py cpp11
-```
+## 功能列表
 
-## 详细功能
-
-- **命名检查**: 验证标识符是否符合 C++ 命名规范
-- **包含保护**: 检查头文件的 #ifndef/#define 保护
-- **内存安全**: 检测裸指针、内存泄漏、悬空指针等问题
-- **现代 C++**: 建议使用智能指针、auto、范围 for 等新特性
-- **Const 检查**: 检查缺失的 const 声明
+| 功能 | 脚本 | 说明 |
+|------|------|------|
+| 命名检查 | naming_checker.py | 验证标识符命名规范 |
+| 包含保护 | include_guard_checker.py | 检查头文件保护宏 |
+| 内存安全 | memory_safety.py | 检测内存泄漏、悬空指针等 |
+| 现代 C++ | modern_cpp.py | 建议使用新特性 |
+| Const 检查 | const_checker.py | 检查 const 正确性 |
+| 代码审查 | code_review.py | 生成审查提示 |
+| 重构建议 | refactor_suggestion.py | 生成重构提示 |
 
 ## 参考文档
 
+- 详细规范: `references/quick_reference.md`
 - 命名规范: `references/naming_conventions.json`
 - 最佳实践: `references/best_practices.json`
-- C++ 标准特性: `references/cpp_standards.json`
+- C++ 标准: `references/cpp_standards.json`
 - 设计模式: `references/design_patterns.json`
