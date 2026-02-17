@@ -54,7 +54,7 @@ python scripts/refactor_suggestion.py cpp17
 ## 参考文档
 
 - 详细规范: `references/quick_reference.md`
-- 命名规范: `references/naming_conventions.json`
-- 最佳实践: `references/best_practices.json`
-- C++ 标准: `references/cpp_standards.json`
-- 设计模式: `references/design_patterns.json`
+- 命名规范: `assets/naming_conventions.json`
+- 最佳实践: `assets/best_practices.json`
+- C++ 标准: `assets/cpp_standards.json`
+- 设计模式: `assets/design_patterns.json`
