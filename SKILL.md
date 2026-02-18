@@ -9,32 +9,14 @@ description: "C++ 编码规范检查和代码审查工具。使用方式: /cpp-g
 
 ## 快速开始
 
-### 命令行使用
-
-```bash
-# 命名检查
-python scripts/naming_checker.py <identifier> <category>
-
-# 内存安全分析
-cat code.cpp | python scripts/memory_safety.py
-
-# 现代 C++ 建议
-cat code.cpp | python scripts/modern_cpp.py cpp20
-
-# 代码审查提示
-python scripts/code_review.py safety
-
-# 重构建议
-python scripts/refactor_suggestion.py cpp17
 ```
-
-### 通过命令调用
-
-```
-/cpp-guidelines check naming <identifier> <category>
-/cpp-guidelines check memory < code.cpp
-/cpp-guidelines review safety
-/cpp-guidelines refactor cpp20
+/cpp-guidelines naming <identifier>   # 命名检查，类别可省略
+/cpp-guidelines memory                # 内存安全分析
+/cpp-guidelines modern [cpp17]        # 现代 C++ 建议
+/cpp-guidelines const                 # const 正确性检查
+/cpp-guidelines include               # 头文件保护检查
+/cpp-guidelines review [focus]        # 代码审查
+/cpp-guidelines refactor [standard]   # 重构建议
 ```
 
 详细使用说明见 `commands/cpp-guidelines.md`
