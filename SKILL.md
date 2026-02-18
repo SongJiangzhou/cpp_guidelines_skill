@@ -1,6 +1,6 @@
 ---
 name: cpp-guidelines
-description: C++ 编码规范检查和代码审查工具。使用方式: /cpp-guidelines [功能] [参数]
+description: "C++ 编码规范检查和代码审查工具。使用方式: /cpp-guidelines [功能] [参数]"
 ---
 
 # C++ 编码规范检查
